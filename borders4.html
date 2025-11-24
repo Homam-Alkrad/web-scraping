@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Light & High-Class Chemistry Frames</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #fafafa;
+            --gold-accent: #d4af37;
+            --soft-pink: #fce7f3;
+            --glass-border: rgba(255, 255, 255, 0.6);
+            --text-primary: #334155;
+            --text-secondary: #64748b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            /* Subtle texture for the whole page */
+            background-image: 
+                radial-gradient(circle at 100% 0%, rgba(212, 175, 55, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 0% 100%, rgba(6, 182, 212, 0.05) 0%, transparent 20%);
+            min-height: 100vh;
+            padding: 60px 20px;
+            font-family: 'Cairo', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 80px;
+        }
+
+        .question-box {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            min-height: 280px;
+            padding: 50px;
+            margin: 0 auto;
+            transition: transform 0.3s ease;
+        }
+
+        .question-box:hover {
+            transform: translateY(-5px);
+        }
+
+        .content-area {
+            position: relative;
+            z-index: 2;
+        }
+
+        h3 {
+            margin-bottom: 15px;
+            font-weight: 900;
+            color: #1e293b;
+        }
+
+        p {
+            font-size: 1.15rem;
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+
+        /* =========================================
+           STYLE 1: The Crystal Prism (المنشور الزجاجي)
+           High-class, clean, refraction effects
+           ========================================= */
+        .box-prism {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid white;
+            box-shadow: 
+                20px 20px 40px -10px rgba(0,0,0,0.05),
+                inset 0 0 0 1px rgba(255,255,255, 0.8);
+            border-radius: 2px; /* Sharp edges for crystal look */
+            overflow: hidden;
+        }
+
+        .box-prism::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 45%,
+                rgba(255, 255, 255, 0.8) 50%,
+                rgba(6, 182, 212, 0.1) 55%,
+                transparent 60%
+            );
+            transform: rotate(30deg);
+            pointer-events: none;
+        }
+
+        .prism-corner {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            z-index: 1;
+        }
+
+        .pc-top-right {
+            top: 0;
+            right: 0;
+            border-width: 0 80px 80px 0;
+            border-color: transparent rgba(6, 182, 212, 0.05) transparent transparent;
+        }
+
+        .pc-bottom-left {
+            bottom: 0;
+            left: 0;
+            border-width: 80px 0 0 80px;
+            border-color: transparent transparent transparent rgba(236, 72, 153, 0.05);
+        }
+
+        .box-prism h3 {
+            color: #0e7490;
+            border-bottom: 2px solid rgba(6, 182, 212, 0.2);
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+
+        /* =========================================
+           STYLE 2: Marble & Gold (الرخام والكيمياء)
+           Luxurious, Alchemist vibe, texture
+           ========================================= */
+        .box-marble {
+            background-color: #fff;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
+            border: 1px solid #e5e5e5;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            position: relative;
+        }
+
+        /* Gold Border Frame */
+        .box-marble::after {
+            content: '';
+            position: absolute;
+            top: 15px; bottom: 15px; left: 15px; right: 15px;
+            border: 1px solid var(--gold-accent);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .gold-seal {
+            position: absolute;
+            top: -20px;
+            right: 50%;
+            transform: translateX(50%);
+            background: white;
+            border: 1px solid var(--gold-accent);
+            padding: 5px 20px;
+            color: #b45309;
+            font-family: 'Amiri', serif;
+            font-weight: bold;
+            font-size: 1.1rem;
+            z-index: 2;
+            box-shadow: 0 4px 10px rgba(212, 175, 55, 0.2);
+        }
+
+        .box-marble h3 {
+            font-family: 'Amiri', serif;
+            font-size: 1.8rem;
+            text-align: center;
+            color: #78350f;
+        }
+
+        /* =========================================
+           STYLE 3: Soft Titration (تدرج المعايرة)
+           Very soft pinks/purples, fluid shapes
+           ========================================= */
+        .box-titration {
+            background: #fff;
+            border-radius: 40px;
+            box-shadow: 
+                0 20px 60px rgba(236, 72, 153, 0.1),
+                inset 0 0 0 2px white;
+            overflow: hidden;
+            border: 1px solid rgba(236, 72, 153, 0.1);
+        }
+
+        .titration-fluid {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at top right, #fdf2f8, transparent 60%);
+            z-index: 0;
+        }
+
+        .drop-mark {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(249, 168, 212, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            top: -30px;
+            right: -30px;
+        }
+        
+        .box-titration h3 {
+            color: #db2777;
+            position: relative;
+        }
+        
+        .box-titration p {
+            color: #701a75;
+        }
+
+        /* =========================================
+           STYLE 4: Atomic Grid (الشبكة الذرية)
+           Minimalist, Swiss design, precise lines
+           ========================================= */
+        .box-grid {
+            background: white;
+            border: 1px solid #cbd5e1;
+            background-image: 
+                linear-gradient(#f1f5f9 1px, transparent 1px),
+                linear-gradient(90deg, #f1f5f9 1px, transparent 1px);
+            background-size: 40px 40px;
+            border-radius: 4px;
+        }
+
+        .grid-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, #3b82f6 33%, #10b981 33%, #10b981 66%, #f59e0b 66%);
+        }
+
+        .element-block {
+            position: absolute;
+            top: 40px;
+            right: 40px;
+            width: 60px;
+            height: 60px;
+            border: 2px solid #334155;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #334155;
+            background: white;
+            box-shadow: 5px 5px 0 #e2e8f0;
+        }
+        
+        .element-number { font-size: 0.8rem; align-self: flex-start; padding-right: 5px; width: 100%; }
+        .element-symbol { font-size: 1.5rem; line-height: 1; }
+
+        .box-grid .content-area {
+            margin-top: 20px;
+            padding-right: 80px; /* Space for the element block */
+        }
+
+        /* =========================================
+           STYLE 5: Frosted Vapor (البخار المكثف)
+           Airy, light gray, subtle shadows
+           ========================================= */
+        .box-vapor {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 24px;
+            box-shadow: 
+                0 10px 25px rgba(148, 163, 184, 0.1),
+                0 -4px 10px rgba(255,255,255, 1) inset;
+            border: 1px solid white;
+        }
+
+        /* Condensation drops */
+        .cond-drop {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 
+                inset 1px 1px 4px rgba(0,0,0,0.05),
+                1px 1px 2px rgba(0,0,0,0.05);
+        }
+        .cd-1 { width: 12px; height: 12px; top: 20px; left: 50%; }
+        .cd-2 { width: 8px; height: 8px; top: 40px; left: 52%; }
+        .cd-3 { width: 15px; height: 15px; bottom: 30px; right: 30px; opacity: 0.6; }
+
+        .box-vapor h3 {
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 1.1rem;
+            color: #94a3b8;
+        }
+
+        .box-vapor h3::before {
+            content: '●';
+            color: #38bdf8;
+            margin-left: 10px;
+        }
+        
+        .box-vapor p {
+            font-size: 1.3rem;
+            color: #334155;
+            font-weight: 300;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Box 1: The Crystal Prism -->
+    <div class="question-box box-prism">
+        <div class="prism-corner pc-top-right"></div>
+        <div class="prism-corner pc-bottom-left"></div>
+        
+        <div class="content-area">
+            <h3>البلورات والجوامد</h3>
+            <p>تتميز المواد الصلبة البلورية بترتيب منتظم للجزيئات. ما الفرق بين الشبكة البلورية لكلوريد الصوديوم (ملح الطعام) والماس من حيث نوع الروابط والقوى بين الجزيئات؟</p>
+        </div>
+    </div>
+
+    <!-- Box 2: Marble & Gold -->
+    <div class="question-box box-marble">
+        <div class="gold-seal">سؤال ذهبي</div>
+        
+        <div class="content-area">
+            <h3>الكيمياء الحرارية</h3>
+            <br>
+            <p>احسب التغير في الإنثالبي القياسي للتفاعل التالي، معتمداً على قيم حرارة التكوين القياسية للمواد المتفاعلة والناتجة. تأكد من مراعاة الحالة الفيزيائية لكل عنصر.</p>
+        </div>
+    </div>
+
+    <!-- Box 3: Soft Titration -->
+    <div class="question-box box-titration">
+        <div class="titration-fluid"></div>
+        <div class="drop-mark"></div>
+        
+        <div class="content-area">
+            <h3>الأحماض والقواعد</h3>
+            <p>عند الوصول لنقطة التكافؤ في معايرة حمض ضعيف مع قاعدة قوية، يكون الأس الهيدروجيني (pH) للمحلول أكبر من 7. فسر هذه الظاهرة كيميائياً باستخدام معادلات التميؤ.</p>
+        </div>
+    </div>
+
+    <!-- Box 4: Atomic Grid -->
+    <div class="question-box box-grid">
+        <div class="grid-header"></div>
+        <div class="element-block">
+            <span class="element-number">6</span>
+            <span class="element-symbol">C</span>
+        </div>
+        
+        <div class="content-area">
+            <h3>الكيمياء العضوية</h3>
+            <p>ارسم متشكلات السلسلة (Isomers) الممكنة للصيغة الجزيئية C₅H₁₂. سمِّ كل متشكل وفق نظام الأيوباك (IUPAC) وحدد أيهم يمتلك أقل درجة غليان ولماذا.</p>
+        </div>
+    </div>
+
+    <!-- Box 5: Frosted Vapor -->
+    <div class="question-box box-vapor">
+        <div class="cond-drop cd-1"></div>
+        <div class="cond-drop cd-2"></div>
+        <div class="cond-drop cd-3"></div>
+        
+        <div class="content-area">
+            <h3>حالات المادة: الغازات</h3>
+            <br>
+            <p>يشغل غاز حجمًا قدره 4 لتر عند ضغط 2 atm ودرجة حرارة 300 كلفن. إذا تضاعف الضغط وانخفضت درجة الحرارة إلى النصف، فكم سيصبح الحجم الجديد للغاز؟</p>
+        </div>
+    </div>
+
+</body>
+</html>
