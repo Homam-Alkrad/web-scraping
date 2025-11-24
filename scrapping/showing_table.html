@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Question Statistics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #ffffff;
+            padding: 20px;
+        }
+
+        .filters-container {
+            background-color: #ffffff;
+            border: 2px solid #000000;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #000000;
+            font-weight: bold;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #000000;
+            background-color: #ffffff;
+            color: #000000;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: 2px solid #000000;
+            background-color: #ffffff;
+            color: #000000;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            background-color: #f0f0f0;
+        }
+
+        .stats-info {
+            background-color: #ffffff;
+            border: 2px solid #000000;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stats-info span {
+            color: #000000;
+            font-weight: bold;
+            margin-left: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #ffffff;
+            border: 2px solid #000000;
+        }
+
+        th, td {
+            border: 1px solid #000000;
+            padding: 12px;
+            text-align: center;
+            color: #000000;
+        }
+
+        th {
+            background-color: #ffffff;
+            font-weight: bold;
+            border: 2px solid #000000;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .hidden-column {
+            display: none;
+        }
+
+        #loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 18px;
+            color: #000000;
+        }
+
+        .error {
+            color: #ff0000;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        a {
+            color: #000000;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading">Loading...</div>
+
+    <div id="mainContent" class="hidden">
+        <div class="filters-container">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label for="filterLecture">رقم الحصة:</label>
+                    <select id="filterLecture">
+                        <option value="">الكل</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="filterClassification">التصنيف الرئيسي:</label>
+                    <select id="filterClassification">
+                        <option value="">الكل</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="filterSubclassification">التصنيف الفرعي:</label>
+                    <select id="filterSubclassification">
+                        <option value="">الكل</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="filterGroup">المجموعة:</label>
+                    <select id="filterGroup">
+                        <option value="">الكل</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="sortMastery">ترتيب حسب نسبة الإتقان:</label>
+                    <select id="sortMastery">
+                        <option value="">بدون ترتيب</option>
+                        <option value="asc">تصاعدي (من الأقل إلى الأعلى)</option>
+                        <option value="desc">تنازلي (من الأعلى إلى الأقل)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="filter-buttons">
+                <button class="btn" onclick="applyFilters()">تطبيق الفلاتر</button>
+                <button class="btn" onclick="resetFilters()">إعادة تعيين</button>
+            </div>
+        </div>
+
+        <div class="stats-info">
+            <span>إجمالي الأسئلة: <span id="totalQuestions">0</span></span>
+            <span>الأسئلة المعروضة: <span id="displayedQuestions">0</span></span>
+            <span>متوسط الإتقان: <span id="avgMastery">0</span>%</span>
+        </div>
+
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th class="hidden-column">Hidden</th>
+                    <th>Question ID</th>
+                    <th>Mastery Rate</th>
+                    <th>Subject ID</th>
+                    <th>Lecture Number</th>
+                    <th>Classification ID</th>
+                    <th>Classification Title</th>
+                    <th>Subclassification Title</th>
+                    <th>Group ID</th>
+                    <th>Group Title</th>
+                    <th>#</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+    <script>
+        let allData = [];
+        let filteredData = [];
+
+        async function loadDatabase() {
+            try {
+                const SQL = await initSqlJs({
+                    locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
+                });
+
+                const response = await fetch('question_statistics.db');
+                const buffer = await response.arrayBuffer();
+                const db = new SQL.Database(new Uint8Array(buffer));
+
+                const result = db.exec(`
+                    SELECT 
+                        id,
+                        question_id,
+                        subject_id,
+                        lecture_number,
+                        mastery_rate,
+                        classification_id,
+                        classification_title,
+                        subclassification_title,
+                        group_id,
+                        group_title
+                    FROM question_stats
+                    ORDER BY lecture_number, question_id
+                `);
+
+                if (result.length > 0) {
+                    allData = result[0].values;
+                    filteredData = [...allData];
+                    populateFilters();
+                    displayData(filteredData);
+                    updateStats();
+                    
+                    document.getElementById('loading').classList.add('hidden');
+                    document.getElementById('mainContent').classList.remove('hidden');
+                } else {
+                    document.getElementById('loading').innerHTML = '<div class="error">No data found</div>';
+                }
+
+                db.close();
+            } catch (error) {
+                console.error('Error loading database:', error);
+                document.getElementById('loading').innerHTML = '<div class="error">Error loading data: ' + error.message + '</div>';
+            }
+        }
+
+        function populateFilters() {
+            const lectures = new Set();
+            const classifications = new Set();
+            const subclassifications = new Set();
+            const groups = new Set();
+
+            allData.forEach(row => {
+                if (row[3]) lectures.add(row[3]);
+                if (row[6] && row[6].trim() !== '') classifications.add(row[6]);
+                if (row[7] && row[7].trim() !== '') subclassifications.add(row[7]);
+                if (row[9] && row[9].trim() !== '') groups.add(row[9]);
+            });
+
+            const lectureSelect = document.getElementById('filterLecture');
+            Array.from(lectures).sort((a, b) => a - b).forEach(lecture => {
+                const option = document.createElement('option');
+                option.value = lecture;
+                option.textContent = lecture;
+                lectureSelect.appendChild(option);
+            });
+
+            const classificationSelect = document.getElementById('filterClassification');
+            Array.from(classifications).sort().forEach(classification => {
+                const option = document.createElement('option');
+                option.value = classification;
+                option.textContent = classification;
+                classificationSelect.appendChild(option);
+            });
+
+            classificationSelect.addEventListener('change', updateSubclassificationFilter);
+
+            const subclassificationSelect = document.getElementById('filterSubclassification');
+            Array.from(subclassifications).sort().forEach(subclassification => {
+                const option = document.createElement('option');
+                option.value = subclassification;
+                option.textContent = subclassification;
+                subclassificationSelect.appendChild(option);
+            });
+
+            const groupSelect = document.getElementById('filterGroup');
+            Array.from(groups).sort().forEach(group => {
+                const option = document.createElement('option');
+                option.value = group;
+                option.textContent = group;
+                groupSelect.appendChild(option);
+            });
+        }
+
+        function updateSubclassificationFilter() {
+            const selectedClassification = document.getElementById('filterClassification').value;
+            const subclassificationSelect = document.getElementById('filterSubclassification');
+            
+            subclassificationSelect.innerHTML = '<option value="">الكل</option>';
+            
+            if (!selectedClassification) {
+                const allSubclassifications = new Set();
+                allData.forEach(row => {
+                    if (row[7] && row[7].trim() !== '') {
+                        allSubclassifications.add(row[7]);
+                    }
+                });
+                
+                Array.from(allSubclassifications).sort().forEach(subclassification => {
+                    const option = document.createElement('option');
+                    option.value = subclassification;
+                    option.textContent = subclassification;
+                    subclassificationSelect.appendChild(option);
+                });
+            } else {
+                const filteredSubclassifications = new Set();
+                allData.forEach(row => {
+                    if (row[6] === selectedClassification && row[7] && row[7].trim() !== '') {
+                        filteredSubclassifications.add(row[7]);
+                    }
+                });
+                
+                Array.from(filteredSubclassifications).sort().forEach(subclassification => {
+                    const option = document.createElement('option');
+                    option.value = subclassification;
+                    option.textContent = subclassification;
+                    subclassificationSelect.appendChild(option);
+                });
+            }
+        }
+
+        function applyFilters() {
+            const lectureFilter = document.getElementById('filterLecture').value;
+            const classificationFilter = document.getElementById('filterClassification').value;
+            const subclassificationFilter = document.getElementById('filterSubclassification').value;
+            const groupFilter = document.getElementById('filterGroup').value;
+            const sortMastery = document.getElementById('sortMastery').value;
+
+            filteredData = allData.filter(row => {
+                const lectureMatch = !lectureFilter || row[3] == lectureFilter;
+                const classificationMatch = !classificationFilter || row[6] === classificationFilter;
+                const subclassificationMatch = !subclassificationFilter || row[7] === subclassificationFilter;
+                const groupMatch = !groupFilter || row[9] === groupFilter;
+
+                return lectureMatch && classificationMatch && subclassificationMatch && groupMatch;
+            });
+
+            if (sortMastery === 'asc') {
+                filteredData.sort((a, b) => (parseFloat(a[4]) || 0) - (parseFloat(b[4]) || 0));
+            } else if (sortMastery === 'desc') {
+                filteredData.sort((a, b) => (parseFloat(b[4]) || 0) - (parseFloat(a[4]) || 0));
+            }
+
+            displayData(filteredData);
+            updateStats();
+        }
+
+        function resetFilters() {
+            document.getElementById('filterLecture').value = '';
+            document.getElementById('filterClassification').value = '';
+            document.getElementById('filterSubclassification').value = '';
+            document.getElementById('filterGroup').value = '';
+            document.getElementById('sortMastery').value = '';
+            
+            filteredData = [...allData];
+            displayData(filteredData);
+            updateStats();
+            updateSubclassificationFilter();
+        }
+
+        function displayData(rows) {
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = '';
+
+            rows.forEach(row => {
+                const tr = document.createElement('tr');
+                
+                // Column order: Hidden, Question ID (clickable), Mastery Rate, Subject ID, Lecture Number, 
+                // Classification ID, Classification Title, Subclassification Title, Group ID, Group Title, # (id value, last)
+                const columnOrder = [
+                    { index: 0, type: 'hidden' },     // Hidden column
+                    { index: 1, type: 'link' },       // Question ID (clickable, first visible)
+                    { index: 4, type: 'text' },       // Mastery Rate
+                    { index: 2, type: 'text' },       // Subject ID
+                    { index: 3, type: 'text' },       // Lecture Number
+                    { index: 5, type: 'text' },       // Classification ID
+                    { index: 6, type: 'text' },       // Classification Title
+                    { index: 7, type: 'text' },       // Subclassification Title
+                    { index: 8, type: 'text' },       // Group ID
+                    { index: 9, type: 'text' },       // Group Title
+                    { index: 0, type: 'text' }        // # (id value, last column)
+                ];
+
+                columnOrder.forEach(col => {
+                    const td = document.createElement('td');
+                    
+                    if (col.type === 'hidden') {
+                        td.classList.add('hidden-column');
+                        td.textContent = row[col.index] !== null ? row[col.index] : '';
+                    } else if (col.type === 'link') {
+                        const subjectId = row[2];
+                        const link = document.createElement('a');
+                        link.href = `https://naseehamath.com/dashboard/subject/statistics/${subjectId}`;
+                        link.target = '_blank';
+                        link.rel = 'noopener noreferrer';
+                        link.textContent = row[col.index] !== null ? row[col.index] : '';
+                        td.appendChild(link);
+                    } else {
+                        td.textContent = row[col.index] !== null ? row[col.index] : '';
+                    }
+                    
+                    tr.appendChild(td);
+                });
+                tableBody.appendChild(tr);
+            });
+        }
+
+        function updateStats() {
+            document.getElementById('totalQuestions').textContent = allData.length;
+            document.getElementById('displayedQuestions').textContent = filteredData.length;
+            
+            if (filteredData.length > 0) {
+                const totalMastery = filteredData.reduce((sum, row) => {
+                    return sum + (parseFloat(row[4]) || 0);
+                }, 0);
+                const avgMastery = (totalMastery / filteredData.length).toFixed(2);
+                document.getElementById('avgMastery').textContent = avgMastery;
+            } else {
+                document.getElementById('avgMastery').textContent = '0';
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', loadDatabase);
+    </script>
+</body>
+</html>
