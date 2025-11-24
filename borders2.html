@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creative Chemistry Boxes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 50px;
+        }
+
+        /* Label Style */
+        .label {
+            position: absolute;
+            top: -20px;
+            right: 30px;
+            background: linear-gradient(135deg, #d97706, #f59e0b);
+            color: white;
+            padding: 12px 35px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 22px;
+            box-shadow: 0 4px 15px rgba(217, 119, 6, 0.4);
+            z-index: 10;
+        }
+
+        /* Box 1 - Test Tubes Border */
+        .box1 {
+            background: white;
+            width: 80%;
+            height: 350px;
+            padding: 30px;
+            position: relative;
+            border: 4px solid #8b5cf6;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.2);
+            overflow: visible;
+        }
+
+        .box1::before {
+            content: '';
+            position: absolute;
+            top: -45px;
+            right: 100px;
+            width: 35px;
+            height: 85px;
+            background: linear-gradient(180deg, 
+                transparent 0%, 
+                transparent 20%, 
+                rgba(236, 72, 153, 0.3) 20%, 
+                rgba(236, 72, 153, 0.5) 50%,
+                rgba(236, 72, 153, 0.8) 80%,
+                #ec4899 100%);
+            border: 4px solid #8b5cf6;
+            border-radius: 0 0 50px 50px;
+            border-top: none;
+            box-shadow: inset 0 -20px 30px rgba(236, 72, 153, 0.3),
+                        0 5px 15px rgba(139, 92, 246, 0.3);
+        }
+
+        .box1::after {
+            content: '';
+            position: absolute;
+            top: -45px;
+            right: 160px;
+            width: 35px;
+            height: 75px;
+            background: linear-gradient(180deg, 
+                transparent 0%, 
+                transparent 30%, 
+                rgba(59, 130, 246, 0.3) 30%, 
+                rgba(59, 130, 246, 0.6) 60%,
+                rgba(59, 130, 246, 0.9) 85%,
+                #3b82f6 100%);
+            border: 4px solid #8b5cf6;
+            border-radius: 0 0 50px 50px;
+            border-top: none;
+            box-shadow: inset 0 -15px 25px rgba(59, 130, 246, 0.3),
+                        0 5px 15px rgba(139, 92, 246, 0.3);
+        }
+
+        .test-tube {
+            position: absolute;
+            top: -45px;
+            right: 220px;
+            width: 35px;
+            height: 68px;
+            background: linear-gradient(180deg, 
+                transparent 0%, 
+                transparent 40%, 
+                rgba(16, 185, 129, 0.3) 40%, 
+                rgba(16, 185, 129, 0.6) 65%,
+                rgba(16, 185, 129, 0.9) 85%,
+                #10b981 100%);
+            border: 4px solid #8b5cf6;
+            border-radius: 0 0 50px 50px;
+            border-top: none;
+            box-shadow: inset 0 -15px 25px rgba(16, 185, 129, 0.3),
+                        0 5px 15px rgba(139, 92, 246, 0.3);
+        }
+
+        /* Bubble effects for test tubes */
+        .test-tube::before {
+            content: '';
+            position: absolute;
+            bottom: 20px;
+            left: 8px;
+            width: 6px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            box-shadow: 
+                12px 5px 0 2px rgba(255, 255, 255, 0.4),
+                6px 12px 0 1px rgba(255, 255, 255, 0.5);
+        }
+
+        /* Box 2 - Erlenmeyer Flask Border */
+        .box2 {
+            background: white;
+            width: 80%;
+            height: 350px;
+            padding: 30px;
+            position: relative;
+            border: 4px solid #06b6d4;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(6, 182, 212, 0.2);
+            overflow: visible;
+        }
+
+        .flask {
+            position: absolute;
+            top: -55px;
+            left: 50px;
+            width: 70px;
+            height: 80px;
+            border: 4px solid #06b6d4;
+            border-top: none;
+            clip-path: polygon(
+                30% 0,
+                70% 0,
+                70% 20%,
+                85% 40%,
+                90% 100%,
+                10% 100%,
+                15% 40%,
+                30% 20%
+            );
+            background: linear-gradient(180deg, 
+                transparent 0%, 
+                transparent 50%, 
+                rgba(6, 182, 212, 0.2) 50%,
+                rgba(6, 182, 212, 0.4) 70%,
+                rgba(6, 182, 212, 0.6) 100%);
+            box-shadow: inset 0 -20px 30px rgba(6, 182, 212, 0.3),
+                        0 8px 20px rgba(6, 182, 212, 0.3);
+        }
+
+        .flask::before {
+            content: '';
+            position: absolute;
+            bottom: 30px;
+            left: 15px;
+            width: 8px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            box-shadow: 
+                20px 10px 0 3px rgba(255, 255, 255, 0.4),
+                10px 20px 0 2px rgba(255, 255, 255, 0.3);
+        }
+
+        .flask-neck {
+            position: absolute;
+            top: -75px;
+            left: 71px;
+            width: 28px;
+            height: 24px;
+            border: 4px solid #06b6d4;
+            border-bottom: none;
+            background: linear-gradient(180deg, white 0%, rgba(6, 182, 212, 0.1) 100%);
+            box-shadow: 0 -3px 10px rgba(6, 182, 212, 0.2);
+        }
+
+        .flask-neck::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: -4px;
+            right: -4px;
+            height: 6px;
+            background: #06b6d4;
+            border-radius: 3px 3px 0 0;
+        }
+
+        .box2 .molecule {
+            position: absolute;
+            bottom: -18px;
+            right: 80px;
+            width: 18px;
+            height: 18px;
+            background: radial-gradient(circle, #06b6d4 0%, #0891b2 100%);
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.6),
+                        0 3px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .box2 .molecule::before {
+            content: '';
+            position: absolute;
+            left: 24px;
+            top: -12px;
+            width: 15px;
+            height: 15px;
+            background: radial-gradient(circle, #3b82f6 0%, #2563eb 100%);
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.6),
+                        0 3px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .box2 .molecule::after {
+            content: '';
+            position: absolute;
+            left: 24px;
+            top: 15px;
+            width: 15px;
+            height: 15px;
+            background: radial-gradient(circle, #10b981 0%, #059669 100%);
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.6),
+                        0 3px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .bond {
+            position: absolute;
+            bottom: -9px;
+            right: 98px;
+            width: 26px;
+            height: 3px;
+            background: linear-gradient(90deg, #06b6d4 0%, #3b82f6 100%);
+            transform: rotate(-30deg);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .bond2 {
+            position: absolute;
+            bottom: -9px;
+            right: 98px;
+            width: 26px;
+            height: 3px;
+            background: linear-gradient(90deg, #06b6d4 0%, #10b981 100%);
+            transform: rotate(30deg);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Box 3 - Benzene Ring Corner */
+        .box3 {
+            background: white;
+            width: 80%;
+            height: 350px;
+            padding: 30px;
+            position: relative;
+            border: 4px solid #f59e0b;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(245, 158, 11, 0.2);
+            overflow: visible;
+        }
+
+        .hexagon {
+            position: absolute;
+            top: -35px;
+            right: -35px;
+            width: 60px;
+            height: 70px;
+            background: linear-gradient(135deg, 
+                rgba(245, 158, 11, 0.15) 0%, 
+                rgba(245, 158, 11, 0.35) 100%);
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            border: 4px solid #f59e0b;
+            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3),
+                        inset 0 0 20px rgba(245, 158, 11, 0.2);
+        }
+
+        .hexagon::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 30px;
+            height: 35px;
+            background: transparent;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            border: 2px solid rgba(245, 158, 11, 0.6);
+        }
+
+        .hexagon-small {
+            position: absolute;
+            bottom: -30px;
+            left: -30px;
+            width: 50px;
+            height: 58px;
+            background: linear-gradient(135deg, 
+                rgba(245, 158, 11, 0.15) 0%, 
+                rgba(245, 158, 11, 0.35) 100%);
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            border: 4px solid #f59e0b;
+            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3),
+                        inset 0 0 15px rgba(245, 158, 11, 0.2);
+        }
+
+        .hexagon-small::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 22px;
+            height: 26px;
+            background: transparent;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            border: 2px solid rgba(245, 158, 11, 0.6);
+        }
+
+        .atom-node {
+            position: absolute;
+            top: 50%;
+            left: -15px;
+            width: 26px;
+            height: 26px;
+            background: radial-gradient(circle, #fbbf24 0%, #f59e0b 100%);
+            border-radius: 50%;
+            border: 4px solid white;
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.7),
+                        0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .atom-node::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 12px;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+        }
+
+        .atom-node2 {
+            position: absolute;
+            top: 30%;
+            right: -15px;
+            width: 26px;
+            height: 26px;
+            background: radial-gradient(circle, #f87171 0%, #ef4444 100%);
+            border-radius: 50%;
+            border: 4px solid white;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.7),
+                        0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .atom-node2::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 12px;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+        }
+
+        /* Box 4 - Beaker with Liquid Levels */
+        .box4 {
+            background: white;
+            width: 80%;
+            height: 350px;
+            padding: 30px;
+            position: relative;
+            border: 4px solid #10b981;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.2);
+            overflow: visible;
+        }
+
+        .beaker {
+            position: absolute;
+            top: -50px;
+            right: 115px;
+            width: 80px;
+            height: 90px;
+            border: 4px solid #10b981;
+            border-top: none;
+            border-radius: 0 0 12px 12px;
+            background: linear-gradient(180deg, 
+                rgba(255, 255, 255, 0.5) 0%, 
+                rgba(255, 255, 255, 0.3) 35%, 
+                rgba(16, 185, 129, 0.15) 35%, 
+                rgba(16, 185, 129, 0.25) 55%, 
+                rgba(16, 185, 129, 0.35) 55%,
+                rgba(16, 185, 129, 0.5) 75%,
+                rgba(16, 185, 129, 0.7) 100%);
+            box-shadow: inset 5px 0 15px rgba(255, 255, 255, 0.5),
+                        inset -5px 0 15px rgba(16, 185, 129, 0.3),
+                        0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .beaker::before {
+            content: '';
+            position: absolute;
+            bottom: 25px;
+            left: 12px;
+            width: 8px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            box-shadow: 
+                25px 8px 0 3px rgba(255, 255, 255, 0.5),
+                40px 5px 0 2px rgba(255, 255, 255, 0.4),
+                15px 20px 0 2px rgba(255, 255, 255, 0.45);
+        }
+
+        .beaker-rim {
+            position: absolute;
+            top: -54px;
+            right: 111px;
+            width: 88px;
+            height: 8px;
+            background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+            border-radius: 4px;
+            box-shadow: 0 3px 10px rgba(16, 185, 129, 0.4);
+        }
+
+        .measurement-line {
+            position: absolute;
+            left: 8px;
+            right: 8px;
+            height: 2px;
+            background: rgba(16, 185, 129, 0.6);
+        }
+
+        .measurement-line::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: -3px;
+            width: 8px;
+            height: 8px;
+            border-left: 2px solid rgba(16, 185, 129, 0.6);
+            border-bottom: 2px solid rgba(16, 185, 129, 0.6);
+        }
+
+        .measurement-line::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: -3px;
+            width: 8px;
+            height: 8px;
+            border-right: 2px solid rgba(16, 185, 129, 0.6);
+            border-bottom: 2px solid rgba(16, 185, 129, 0.6);
+        }
+
+        .beaker .measurement-line:nth-of-type(1) { top: 22px; }
+        .beaker .measurement-line:nth-of-type(2) { top: 44px; }
+        .beaker .measurement-line:nth-of-type(3) { top: 66px; }
+
+        .droplet {
+            position: absolute;
+            bottom: -25px;
+            left: 100px;
+            width: 18px;
+            height: 24px;
+            background: radial-gradient(circle at 30% 30%, #34d399 0%, #10b981 100%);
+            border-radius: 50% 50% 50% 0;
+            transform: rotate(45deg);
+            box-shadow: inset -3px -3px 8px rgba(16, 185, 129, 0.6),
+                        0 4px 10px rgba(16, 185, 129, 0.4);
+        }
+
+        .droplet::before {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: 6px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+        }
+
+        /* Box 5 - Molecular Orbital Border */
+        .box5 {
+            background: white;
+            width: 80%;
+            height: 350px;
+            padding: 30px;
+            position: relative;
+            border: 4px solid #ec4899;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(236, 72, 153, 0.2);
+            overflow: visible;
+        }
+
+        .orbital {
+            position: absolute;
+            top: 50%;
+            left: -45px;
+            width: 90px;
+            height: 45px;
+            border: 4px solid #ec4899;
+            border-radius: 50%;
+            transform: translateY(-50%) rotate(-15deg);
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(236, 72, 153, 0.15) 30%,
+                rgba(236, 72, 153, 0.2) 50%, 
+                rgba(236, 72, 153, 0.15) 70%,
+                transparent 100%);
+            box-shadow: 0 0 20px rgba(236, 72, 153, 0.3),
+                        inset 0 0 20px rgba(236, 72, 153, 0.2);
+        }
+
+        .orbital2 {
+            position: absolute;
+            top: 50%;
+            right: -45px;
+            width: 90px;
+            height: 45px;
+            border: 4px solid #8b5cf6;
+            border-radius: 50%;
+            transform: translateY(-50%) rotate(15deg);
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(139, 92, 246, 0.15) 30%,
+                rgba(139, 92, 246, 0.2) 50%, 
+                rgba(139, 92, 246, 0.15) 70%,
+                transparent 100%);
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.3),
+                        inset 0 0 20px rgba(139, 92, 246, 0.2);
+        }
+
+        .nucleus {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            background: radial-gradient(circle at 30% 30%, #f472b6 0%, #ec4899 50%, #8b5cf6 100%);
+            border-radius: 50%;
+            border: 4px solid white;
+            box-shadow: 0 0 30px rgba(236, 72, 153, 0.8),
+                        0 0 50px rgba(139, 92, 246, 0.5),
+                        inset 0 0 15px rgba(255, 255, 255, 0.3);
+        }
+
+        .nucleus::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            width: 12px;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+        }
+
+        .electron {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: radial-gradient(circle at 35% 35%, #60a5fa 0%, #3b82f6 100%);
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 1),
+                        0 0 35px rgba(59, 130, 246, 0.6),
+                        inset 0 0 8px rgba(255, 255, 255, 0.4);
+        }
+
+        .electron::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+        }
+
+        .electron1 { top: 50%; left: -35px; transform: translateY(-50%); }
+        .electron2 { top: 50%; right: -35px; transform: translateY(-50%); }
+
+        .box5 .corner-flask {
+            position: absolute;
+            bottom: -40px;
+            right: 50px;
+            width: 50px;
+            height: 60px;
+            border: 4px solid #ec4899;
+            border-radius: 50% 50% 50% 50% / 20% 20% 80% 80%;
+            background: linear-gradient(180deg, 
+                rgba(255, 255, 255, 0.3) 0%, 
+                rgba(236, 72, 153, 0.15) 50%,
+                rgba(236, 72, 153, 0.3) 100%);
+            box-shadow: inset 5px 0 15px rgba(255, 255, 255, 0.4),
+                        inset -5px 0 10px rgba(236, 72, 153, 0.3),
+                        0 6px 20px rgba(236, 72, 153, 0.3);
+        }
+
+        .box5 .corner-flask::before {
+            content: '';
+            position: absolute;
+            bottom: 15px;
+            left: 12px;
+            width: 6px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            box-shadow: 
+                15px 5px 0 2px rgba(255, 255, 255, 0.4),
+                8px 12px 0 1px rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Box 1: Test Tubes -->
+        <div class="box1">
+            <div class="label">سؤال</div>
+            <div class="test-tube"></div>
+        </div>
+
+        <!-- Box 2: Erlenmeyer Flask -->
+        <div class="box2">
+            <div class="label">سؤال</div>
+            <div class="flask-neck"></div>
+            <div class="flask"></div>
+            <div class="molecule"></div>
+            <div class="bond"></div>
+            <div class="bond2"></div>
+        </div>
+
+        <!-- Box 3: Benzene Ring -->
+        <div class="box3">
+            <div class="label">سؤال</div>
+            <div class="hexagon"></div>
+            <div class="hexagon-small"></div>
+            <div class="atom-node"></div>
+            <div class="atom-node2"></div>
+        </div>
+
+        <!-- Box 4: Beaker with Measurements -->
+        <div class="box4">
+            <div class="label">سؤال</div>
+            <div class="beaker-rim"></div>
+            <div class="beaker">
+                <div class="measurement-line"></div>
+                <div class="measurement-line"></div>
+                <div class="measurement-line"></div>
+            </div>
+            <div class="droplet"></div>
+        </div>
+
+        <!-- Box 5: Molecular Orbital -->
+        <div class="box5">
+            <div class="label">سؤال</div>
+            <div class="orbital">
+                <div class="electron electron1"></div>
+            </div>
+            <div class="orbital2">
+                <div class="electron electron2"></div>
+            </div>
+            <div class="corner-flask"></div>
+        </div>
+    </div>
+</body>
+</html>
