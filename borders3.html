@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creative Chemistry Question Frames</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --glass-blue: #06b6d4;
+            --atom-orange: #f97316;
+            --acid-green: #84cc16;
+            --neon-purple: #a855f7;
+            --report-paper: #f8fafc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #f0f4f8;
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 30px 30px;
+            min-height: 100vh;
+            padding: 60px 20px;
+            font-family: 'Cairo', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 80px;
+        }
+
+        /* Base Container for all boxes */
+        .question-box {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            min-height: 300px;
+            padding: 40px;
+            margin: 0 auto;
+            direction: rtl;
+        }
+
+        /* Generic Label Styling (Shared Logic, Specific Colors per box) */
+        .q-label {
+            position: absolute;
+            font-weight: 900;
+            font-size: 1.5rem;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .content-area {
+            position: relative;
+            z-index: 5;
+            color: #334155;
+            font-size: 1.2rem;
+            line-height: 1.8;
+        }
+
+        /* =========================================
+           STYLE 1: The "Volumetric Flask" (Liquid)
+           ========================================= */
+        .box-liquid {
+            background: white;
+            border-radius: 20px 20px 50px 50px;
+            box-shadow: 
+                0 20px 50px rgba(6, 182, 212, 0.15),
+                inset 0 0 0 4px rgba(255, 255, 255, 0.5),
+                inset 0 0 20px rgba(6, 182, 212, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            overflow: hidden;
+        }
+
+        .box-liquid .q-label {
+            top: 0;
+            right: 40px;
+            background: var(--glass-blue);
+            color: white;
+            padding: 10px 30px;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 5px 15px rgba(6, 182, 212, 0.4);
+        }
+
+        /* The Fluid Effect at bottom */
+        .box-liquid::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 120px;
+            background: linear-gradient(to top, rgba(6, 182, 212, 0.2), transparent);
+            border-radius: 0 0 50px 50px;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Bubbles decoration */
+        .bubble {
+            position: absolute;
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            border-radius: 50%;
+            z-index: 1;
+        }
+        .b1 { width: 40px; height: 40px; bottom: 20px; left: 10%; }
+        .b2 { width: 20px; height: 20px; bottom: 60px; left: 15%; }
+        .b3 { width: 60px; height: 60px; bottom: -10px; right: 10%; }
+        .b4 { width: 15px; height: 15px; bottom: 80px; right: 20%; }
+
+        /* =========================================
+           STYLE 2: The "Molecular Bond" (Structure)
+           ========================================= */
+        .box-molecule {
+            background: white;
+            border: 3px solid #cbd5e1;
+            border-radius: 8px;
+            /* Hexagon Pattern Background */
+            background-image: url("data:image/svg+xml,%3Csvg width='24' height='40' viewBox='0 0 24 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 40c5.523 0 10-4.477 10-10V10c0-5.523-4.477-10-10-10s-10 4.477-10 10v20c0 5.523 4.477 10 10 10z' fill='%23f97316' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+        }
+
+        .box-molecule .q-label {
+            top: -25px;
+            right: 50%;
+            transform: translateX(50%);
+            background: white;
+            border: 3px solid var(--atom-orange);
+            color: var(--atom-orange);
+            padding: 8px 40px;
+            border-radius: 50px;
+            z-index: 20;
+        }
+
+        /* Corner Atoms */
+        .atom-corner {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border: 4px solid var(--atom-orange);
+            border-radius: 50%;
+            z-index: 10;
+        }
+        .ac-1 { top: -12px; left: -12px; }
+        .ac-2 { top: -12px; right: -12px; }
+        .ac-3 { bottom: -12px; left: -12px; }
+        .ac-4 { bottom: -12px; right: -12px; }
+
+        /* Bonds (Lines) */
+        .box-molecule::before {
+            content: '';
+            position: absolute;
+            top: -3px; bottom: -3px; left: 20px; right: 20px;
+            border-top: 3px solid var(--atom-orange);
+            border-bottom: 3px solid var(--atom-orange);
+            pointer-events: none;
+        }
+        .box-molecule::after {
+            content: '';
+            position: absolute;
+            top: 20px; bottom: 20px; left: -3px; right: -3px;
+            border-left: 3px solid var(--atom-orange);
+            border-right: 3px solid var(--atom-orange);
+            pointer-events: none;
+        }
+
+        /* =========================================
+           STYLE 3: The "Lab Report" (Paper)
+           ========================================= */
+        .box-paper {
+            background-color: #fff;
+            /* Graph Paper Effect */
+            background-image: 
+                linear-gradient(rgba(148, 163, 184, 0.2) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(148, 163, 184, 0.2) 1px, transparent 1px);
+            background-size: 20px 20px;
+            box-shadow: 2px 2px 15px rgba(0,0,0,0.1);
+            transform: rotate(-1deg); /* Slight tilt for realism */
+            border: 1px solid #e2e8f0;
+        }
+
+        .box-paper .q-label {
+            top: -15px;
+            right: 20px;
+            background: #fef3c7;
+            color: #78350f;
+            padding: 10px 25px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            font-family: 'Courier New', Courier, monospace;
+            transform: rotate(2deg);
+        }
+
+        /* Scotch Tape Effect */
+        .tape {
+            position: absolute;
+            top: -25px;
+            right: 45px;
+            width: 40px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.6);
+            border-left: 1px dashed rgba(0,0,0,0.1);
+            border-right: 1px dashed rgba(0,0,0,0.1);
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+            transform: rotate(-5deg);
+            z-index: 15;
+            opacity: 0.8;
+        }
+
+        .paper-hole {
+            position: absolute;
+            left: 15px;
+            width: 20px;
+            height: 20px;
+            background: #f0f4f8; /* Matches body bg */
+            border-radius: 50%;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+        }
+        .ph-1 { top: 30px; }
+        .ph-2 { top: 50%; margin-top: -10px; }
+        .ph-3 { bottom: 30px; }
+
+        /* =========================================
+           STYLE 4: The "Hazard Zone" (Industrial)
+           ========================================= */
+        .box-hazard {
+            background: #fff;
+            border: 4px solid #1e293b;
+            position: relative;
+            box-shadow: 10px 10px 0 #1e293b; /* Hard shadow */
+        }
+
+        /* Striped Header */
+        .hazard-stripes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: repeating-linear-gradient(
+                45deg,
+                #fbbf24,
+                #fbbf24 10px,
+                #1e293b 10px,
+                #1e293b 20px
+            );
+            border-bottom: 4px solid #1e293b;
+            z-index: 1;
+        }
+
+        .box-hazard .q-label {
+            top: 8px;
+            right: 50%;
+            transform: translateX(50%);
+            background: #1e293b;
+            color: #fbbf24;
+            padding: 2px 30px;
+            border: 2px solid #fbbf24;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            z-index: 5;
+        }
+
+        .box-hazard .content-area {
+            margin-top: 30px;
+        }
+
+        /* Warning Symbols */
+        .hazard-icon {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            font-size: 3rem;
+            color: rgba(30, 41, 59, 0.1);
+            font-weight: bold;
+            user-select: none;
+        }
+
+        /* =========================================
+           STYLE 5: The "Neon Reactant" (Energy)
+           ========================================= */
+        .box-neon {
+            background: #111827; /* Dark background */
+            border-radius: 24px;
+            border: 2px solid var(--neon-purple);
+            box-shadow: 
+                0 0 20px rgba(168, 85, 247, 0.3),
+                inset 0 0 30px rgba(168, 85, 247, 0.1);
+            color: #e9d5ff;
+        }
+
+        .box-neon .q-label {
+            top: -20px;
+            right: 30px;
+            background: #111827;
+            border: 2px solid var(--neon-purple);
+            color: var(--neon-purple);
+            padding: 5px 25px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px var(--neon-purple);
+        }
+
+        .box-neon .content-area {
+            color: #e2e8f0;
+        }
+
+        /* Glowing Rings Decoration */
+        .glow-ring {
+            position: absolute;
+            border: 1px solid rgba(168, 85, 247, 0.4);
+            border-radius: 50%;
+            z-index: 0;
+        }
+        .gr-1 { width: 150px; height: 150px; top: -50px; left: -50px; border-width: 2px; }
+        .gr-2 { width: 100px; height: 100px; bottom: -30px; right: -30px; border-color: rgba(59, 130, 246, 0.4); }
+
+        .particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #fff;
+        }
+        .p1 { top: 20%; right: 10%; opacity: 0.8; }
+        .p2 { bottom: 30%; left: 15%; opacity: 0.5; }
+
+    </style>
+</head>
+<body>
+
+    <!-- Box 1: The Solution (Liquid/Glass) -->
+    <div class="question-box box-liquid">
+        <div class="q-label">سؤال كيميائي ٠١</div>
+        <div class="bubble b1"></div>
+        <div class="bubble b2"></div>
+        <div class="bubble b3"></div>
+        <div class="bubble b4"></div>
+        
+        <div class="content-area">
+            <h3>التفاعلات في المحاليل المائية</h3>
+            <br>
+            <p>عند خلط محلول نترات الفضة مع محلول كلوريد الصوديوم، يتكون راسب أبيض. اكتب المعادلة الأيونية النهائية لهذا التفاعل، موضحاً الحالة الفيزيائية لكل مادة.</p>
+        </div>
+    </div>
+
+    <!-- Box 2: The Molecule (Structural Bond) -->
+    <div class="question-box box-molecule">
+        <div class="atom-corner ac-1"></div>
+        <div class="atom-corner ac-2"></div>
+        <div class="atom-corner ac-3"></div>
+        <div class="atom-corner ac-4"></div>
+        
+        <div class="q-label">سؤال عضوي ٠٢</div>
+        
+        <div class="content-area" style="text-align: center;">
+            <h3>الروابط التساهمية</h3>
+            <br>
+            <p>اشرح كيف يختلف التهجين في ذرة الكربون بين جزيء الإيثان (C₂H₆) وجزيء الإيثين (C₂H₄). ما هو الشكل الهندسي المتوقع لكل منهما؟</p>
+        </div>
+    </div>
+
+    <!-- Box 3: The Lab Report (Paper) -->
+    <div class="question-box box-paper">
+        <div class="tape"></div>
+        <div class="paper-hole ph-1"></div>
+        <div class="paper-hole ph-2"></div>
+        <div class="paper-hole ph-3"></div>
+        
+        <div class="q-label">تقرير المختبر</div>
+        
+        <div class="content-area">
+            <h3 style="font-family: 'Courier New', serif; color: #0f172a;">تجربة المعايرة</h3>
+            <br>
+            <p style="font-family: 'Courier New', serif; color: #334155;">
+                تمت معايرة 25 مل من حمض الهيدروكلوريك مجهول التركيز باستخدام محلول قياسي من هيدروكسيد الصوديوم بتركيز 0.1M. إذا كان حجم القاعدة المستهلك عند نقطة التكافؤ هو 20 مل، احسب مولارية الحمض.
+            </p>
+        </div>
+    </div>
+
+    <!-- Box 4: The Hazard Zone (Industrial) -->
+    <div class="question-box box-hazard">
+        <div class="hazard-stripes"></div>
+        <div class="q-label">تحذير: تفاعل</div>
+        <div class="hazard-icon">⚠️</div>
+        
+        <div class="content-area">
+            <h3>الديناميكا الحرارية</h3>
+            <br>
+            <p>تفاعل احتراق الميثان هو تفاعل طارد للحرارة بشدة. إذا كانت ΔH للتفاعل تساوي -890 kJ/mol، احسب كمية الحرارة الناتجة عن احتراق 50 جرام من الميثان عند ثبوت الضغط.</p>
+        </div>
+    </div>
+
+    <!-- Box 5: The Neon Reactant (Energy) -->
+    <div class="question-box box-neon">
+        <div class="q-label">التركيب الذري</div>
+        <div class="glow-ring gr-1"></div>
+        <div class="glow-ring gr-2"></div>
+        <div class="particle p1"></div>
+        <div class="particle p2"></div>
+        
+        <div class="content-area">
+            <h3 style="color: #a855f7;">ميكانيكا الكم</h3>
+            <br>
+            <p>قارن بين نموذج بور للذرة والنموذج الميكانيكي الموجي الحديث من حيث مفهوم "المدار" و "الفلك". كيف يفسر كل نموذج طيف انبعاث الهيدروجين؟</p>
+        </div>
+    </div>
+
+</body>
+</html>
