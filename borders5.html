@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creative Question Boxes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            padding: 60px 20px;
+            font-family: 'Cairo', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 80px;
+        }
+
+        .question-box {
+            position: relative;
+            width: 85%;
+            max-width: 900px;
+            min-height: 300px;
+            padding: 45px;
+            background: white;
+            direction: rtl;
+        }
+
+        .q-label {
+            position: absolute;
+            font-weight: 700;
+            font-size: 1.3rem;
+            z-index: 10;
+            padding: 8px 30px;
+            border-radius: 8px;
+        }
+
+        /* =========================================
+           BOX 1: Corner Tab Design
+           ========================================= */
+        .box1 {
+            border: 3px solid #1e293b;
+            border-radius: 4px;
+            box-shadow: 
+                8px 8px 0 0 #1e293b,
+                0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .box1 .q-label {
+            top: -3px;
+            right: -3px;
+            background: #1e293b;
+            color: #fbbf24;
+            border-radius: 0 0 0 12px;
+            border-bottom: 3px solid #fbbf24;
+            border-left: 3px solid #fbbf24;
+        }
+
+        /* =========================================
+           BOX 2: Offset Shadow Frame
+           ========================================= */
+        .box2 {
+            border: 4px solid #ec4899;
+            border-radius: 0;
+            box-shadow: 
+                15px 15px 0 -2px white,
+                15px 15px 0 0 #ec4899,
+                0 20px 50px rgba(236, 72, 153, 0.15);
+            margin: 20px;
+        }
+
+        .box2 .q-label {
+            top: -20px;
+            right: 40px;
+            background: white;
+            color: #ec4899;
+            border: 3px solid #ec4899;
+            box-shadow: 0 8px 20px rgba(236, 72, 153, 0.2);
+        }
+
+        /* =========================================
+           BOX 3: Layered Paper Stack
+           ========================================= */
+        .box3 {
+            border: 2px solid #0ea5e9;
+            border-radius: 8px;
+            box-shadow: 
+                0 5px 0 0 rgba(14, 165, 233, 0.1),
+                0 10px 0 -2px white,
+                0 10px 0 0 rgba(14, 165, 233, 0.2),
+                0 15px 0 -4px white,
+                0 15px 0 -2px rgba(14, 165, 233, 0.1),
+                0 25px 50px rgba(14, 165, 233, 0.15);
+        }
+
+        .box3 .q-label {
+            top: -18px;
+            right: 50%;
+            transform: translateX(50%);
+            background: linear-gradient(135deg, #0ea5e9, #06b6d4);
+            color: white;
+            border-radius: 20px;
+            box-shadow: 0 0 0 4px white, 0 8px 20px rgba(14, 165, 233, 0.3);
+        }
+
+        .box3::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 20px;
+            right: 20px;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #0ea5e9, transparent);
+            border-radius: 2px;
+        }
+
+        /* =========================================
+           BOX 4: Geometric Corner Accent
+           ========================================= */
+        .box4 {
+            border: 3px solid #8b5cf6;
+            border-radius: 12px;
+            box-shadow: 
+                0 20px 60px rgba(139, 92, 246, 0.2),
+                inset 0 0 0 8px white;
+            overflow: visible;
+        }
+
+        .box4 .q-label {
+            top: -16px;
+            right: 35px;
+            background: #8b5cf6;
+            color: white;
+            border-radius: 6px;
+            box-shadow: 
+                0 0 0 3px white,
+                0 8px 24px rgba(139, 92, 246, 0.35);
+        }
+
+        .corner-accent {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border: 3px solid #8b5cf6;
+            z-index: 5;
+        }
+
+        .ca-tl {
+            top: -3px;
+            left: -3px;
+            border-right: none;
+            border-bottom: none;
+            border-radius: 12px 0 0 0;
+        }
+
+        .ca-br {
+            bottom: -3px;
+            right: -3px;
+            border-left: none;
+            border-top: none;
+            border-radius: 0 0 12px 0;
+        }
+
+        /* =========================================
+           BOX 5: Modern Ribbon Design
+           ========================================= */
+        .box5 {
+            border: 3px solid #f59e0b;
+            border-radius: 0;
+            box-shadow: 
+                0 25px 50px rgba(245, 158, 11, 0.15);
+            position: relative;
+            overflow: visible;
+        }
+
+        .box5::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 150px;
+            height: 50px;
+            background: #f59e0b;
+            clip-path: polygon(0 0, 100% 0, 85% 100%, 0 100%);
+            z-index: 1;
+        }
+
+        .box5 .q-label {
+            top: 12px;
+            right: 15px;
+            background: transparent;
+            color: white;
+            z-index: 10;
+            padding: 0;
+            font-size: 1.2rem;
+        }
+
+        .ribbon-fold {
+            position: absolute;
+            top: 50px;
+            right: 128px;
+            width: 0;
+            height: 0;
+            border-left: 22px solid transparent;
+            border-top: 15px solid #d97706;
+            z-index: 0;
+        }
+
+        /* Content Styling */
+        .content {
+            position: relative;
+            z-index: 5;
+            color: #334155;
+            font-size: 1.15rem;
+            line-height: 2;
+        }
+
+        .content h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #1e293b;
+            font-weight: 600;
+        }
+
+        .box5 .content {
+            margin-top: 30px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Box 1: Corner Tab -->
+    <div class="question-box box1">
+        <div class="q-label">سؤال ١</div>
+        <div class="content">
+            <h3>العنوان الرئيسي للسؤال</h3>
+            <p>هنا يأتي نص السؤال بالتفصيل. يمكن أن يكون السؤال طويلاً أو قصيراً حسب الحاجة. التصميم يتكيف مع المحتوى بشكل تلقائي.</p>
+        </div>
+    </div>
+
+    <!-- Box 2: Offset Shadow -->
+    <div class="question-box box2">
+        <div class="q-label">سؤال ٢</div>
+        <div class="content">
+            <h3>العنوان الرئيسي للسؤال</h3>
+            <p>هنا يأتي نص السؤال بالتفصيل. يمكن أن يكون السؤال طويلاً أو قصيراً حسب الحاجة. التصميم يتكيف مع المحتوى بشكل تلقائي.</p>
+        </div>
+    </div>
+
+    <!-- Box 3: Layered Stack -->
+    <div class="question-box box3">
+        <div class="q-label">سؤال ٣</div>
+        <div class="content">
+            <h3>العنوان الرئيسي للسؤال</h3>
+            <p>هنا يأتي نص السؤال بالتفصيل. يمكن أن يكون السؤال طويلاً أو قصيراً حسب الحاجة. التصميم يتكيف مع المحتوى بشكل تلقائي.</p>
+        </div>
+    </div>
+
+    <!-- Box 4: Geometric Corner -->
+    <div class="question-box box4">
+        <div class="corner-accent ca-tl"></div>
+        <div class="corner-accent ca-br"></div>
+        <div class="q-label">سؤال ٤</div>
+        <div class="content">
+            <h3>العنوان الرئيسي للسؤال</h3>
+            <p>هنا يأتي نص السؤال بالتفصيل. يمكن أن يكون السؤال طويلاً أو قصيراً حسب الحاجة. التصميم يتكيف مع المحتوى بشكل تلقائي.</p>
+        </div>
+    </div>
+
+    <!-- Box 5: Modern Ribbon -->
+    <div class="question-box box5">
+        <div class="ribbon-fold"></div>
+        <div class="q-label">سؤال ٥</div>
+        <div class="content">
+            <h3>العنوان الرئيسي للسؤال</h3>
+            <p>هنا يأتي نص السؤال بالتفصيل. يمكن أن يكون السؤال طويلاً أو قصيراً حسب الحاجة. التصميم يتكيف مع المحتوى بشكل تلقائي.</p>
+        </div>
+    </div>
+
+</body>
+</html>
