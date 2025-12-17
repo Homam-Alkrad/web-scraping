@@ -350,95 +350,86 @@
             loadExcelFile();
         }
 
+
         async function loadExcelFile() {
-            try {
-                const excelFile = EXCEL_FILES[currentDatabase];
-                document.getElementById('currentFileName').textContent = excelFile;
-                
-                const response = await fetch(excelFile);
-                
-                if (!response.ok) {
-                    throw new Error(`Excel file not found: ${excelFile}`);
+    try {
+        // Use relative paths (just the filename) so it works on GitHub
+        const excelFile = EXCEL_FILES[currentDatabase];
+        document.getElementById('currentFileName').textContent = excelFile;
+        
+        // Fetching from the same folder where index.html resides
+        const response = await fetch(excelFile);
+        
+        if (!response.ok) {
+            throw new Error(`Could not find ${excelFile} in the repository.`);
+        }
+        
+        const arrayBuffer = await response.arrayBuffer();
+        const data = new Uint8Array(arrayBuffer);
+        const workbook = XLSX.read(data, { type: 'array' });
+        
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+        
+        if (jsonData.length < 2) {
+            throw new Error('The Excel file appears to be empty.');
+        }
+        
+        const headers = jsonData[0];
+        columnMap = {};
+        headers.forEach((header, index) => {
+            const headerLower = header.toLowerCase().replace(/[_\s]/g, '');
+            columnMap[headerLower] = index;
+        });
+        
+        const colNameMappings = {
+            'id': ['id'],
+            'question_id': ['questionid', 'question_id'],
+            'subject_id': ['subjectid', 'subject_id'],
+            'lecture_sequence': ['lecturesequence', 'lecture_sequence', 'lecturenumber', 'lecture_number'],
+            'mastery_rate': ['masteryrate', 'mastery_rate'],
+            'classification_title': ['classificationtitle', 'classification_title'],
+            'subclassification_title': ['subclassificationtitle', 'subclassification_title'],
+            'difficulty': ['difficulty'],
+            'answer_a_percent': ['answerapercent', 'answer_a_percent'],
+            'answer_b_percent': ['answerbpercent', 'answer_b_percent'],
+            'answer_c_percent': ['answercpercent', 'answer_c_percent'],
+            'answer_d_percent': ['answerdpercent', 'answer_d_percent']
+        };
+        
+        const COL = {};
+        for (const [standardName, possibleNames] of Object.entries(colNameMappings)) {
+            for (const name of possibleNames) {
+                if (columnMap[name] !== undefined) {
+                    COL[standardName] = columnMap[name];
+                    break;
                 }
-                
-                const arrayBuffer = await response.arrayBuffer();
-                const data = new Uint8Array(arrayBuffer);
-                const workbook = XLSX.read(data, { type: 'array' });
-                
-                // Get the first sheet (All Questions)
-                const firstSheetName = workbook.SheetNames[0];
-                const worksheet = workbook.Sheets[firstSheetName];
-                
-                // Convert to JSON with header row
-                const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-                
-                if (jsonData.length < 2) {
-                    throw new Error('No data found in Excel file');
-                }
-                
-                // First row is headers
-                const headers = jsonData[0];
-                
-                // Build column map from headers
-                columnMap = {};
-                headers.forEach((header, index) => {
-                    const headerLower = header.toLowerCase().replace(/[_\s]/g, '');
-                    columnMap[headerLower] = index;
-                });
-                
-                // Map common column names
-                const colNameMappings = {
-                    'id': ['id'],
-                    'question_id': ['questionid', 'question_id'],
-                    'subject_id': ['subjectid', 'subject_id'],
-                    'lecture_sequence': ['lecturesequence', 'lecture_sequence', 'lecturenumber', 'lecture_number'],
-                    'mastery_rate': ['masteryrate', 'mastery_rate'],
-                    'classification_title': ['classificationtitle', 'classification_title'],
-                    'classification_id': ['classificationid', 'classification_id'],
-                    'subclassification_title': ['subclassificationtitle', 'subclassification_title'],
-                    'subclassification_id': ['subclassificationid', 'subclassification_id'],
-                    'difficulty': ['difficulty'],
-                    'discrimination': ['discrimination'],
-                    'group_id': ['groupid', 'group_id'],
-                    'answer_a_percent': ['answerapercent', 'answer_a_percent'],
-                    'answer_b_percent': ['answerbpercent', 'answer_b_percent'],
-                    'answer_c_percent': ['answercpercent', 'answer_c_percent'],
-                    'answer_d_percent': ['answerdpercent', 'answer_d_percent']
-                };
-                
-                // Create standardized column indices
-                const COL = {};
-                for (const [standardName, possibleNames] of Object.entries(colNameMappings)) {
-                    for (const name of possibleNames) {
-                        if (columnMap[name] !== undefined) {
-                            COL[standardName] = columnMap[name];
-                            break;
-                        }
-                    }
-                }
-                
-                // Store COL globally
-                window.COL = COL;
-                
-                // Data rows (skip header)
-                allData = jsonData.slice(1).filter(row => row.length > 0 && row[COL.question_id]);
-                filteredData = [...allData];
-                
-                console.log('Loaded', allData.length, 'rows');
-                console.log('Column mapping:', COL);
-                
-                populateFilters();
-                displayData(filteredData);
-                updateStats();
-                
-                document.getElementById('loading').classList.add('hidden');
-                document.getElementById('mainContent').classList.remove('hidden');
-                
-            } catch (error) {
-                console.error('Error loading Excel file:', error);
-                document.getElementById('loading').innerHTML = '<div class="error">Error loading data: ' + error.message + '</div>';
             }
         }
+        
+        window.COL = COL;
+        allData = jsonData.slice(1).filter(row => row.length > 0 && row[COL.question_id]);
+        filteredData = [...allData];
+        
+        populateFilters();
+        displayData(filteredData);
+        updateStats();
+        
+        document.getElementById('loading').classList.add('hidden');
+        document.getElementById('mainContent').classList.remove('hidden');
+        
+    } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('loading').innerHTML = `
+            <div style="color: red; padding: 20px; background: #fff; border-radius: 8px;">
+                <strong>⚠️ Error loading data:</strong><br>
+                ${error.message}<br><br>
+                <em>Note: Ensure your Excel files are named correctly and uploaded to the same folder on GitHub.</em>
+            </div>`;
+    }
+}
+
 
         function populateFilters() {
             const COL = window.COL;
