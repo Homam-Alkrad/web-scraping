@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Question Statistics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #ffffff;
+            padding: 20px;
+        }
+
+        .page-toggle {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .page-toggle .btn {
+            flex: 1;
+            padding: 15px 20px;
+            font-size: 16px;
+        }
+
+        .btn.active {
+            background-color: #000000;
+            color: #ffffff;
+        }
+
+        .page-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 2px solid #000000;
+            background-color: #f9f9f9;
+        }
+
+        .page-title.uncategorized {
+            background-color: #fff3cd;
+            border-color: #ffc107;
+        }
+
+        .filters-container {
+            background-color: #ffffff;
+            border: 2px solid #000000;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #000000;
+            font-weight: bold;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #000000;
+            background-color: #ffffff;
+            color: #000000;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: 2px solid #000000;
+            background-color: #ffffff;
+            color: #000000;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            background-color: #f0f0f0;
+        }
+
+        .stats-info {
+            background-color: #ffffff;
+            border: 2px solid #000000;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .stats-info span {
+            color: #000000;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #ffffff;
+            border: 2px solid #000000;
+        }
+
+        th, td {
+            border: 1px solid #000000;
+            padding: 12px;
+            text-align: center;
+            color: #000000;
+        }
+
+        th {
+            background-color: #ffffff;
+            font-weight: bold;
+            border: 2px solid #000000;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        #loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 18px;
+            color: #000000;
+        }
+
+        .error {
+            color: #ff0000;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        a {
+            color: #0066cc;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
+            color: #004499;
+        }
+
+        .mastery-high {
+            background-color: #d4edda;
+        }
+
+        .mastery-medium {
+            background-color: #fff3cd;
+        }
+
+        .mastery-low {
+            background-color: #f8d7da;
+        }
+
+        .file-info {
+            background-color: #e7f3ff;
+            border: 1px solid #0066cc;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-toggle">
+        <button class="btn active" id="btnCategorized" onclick="switchDatabase('categorized')">
+            📊 الأسئلة المصنفة (Categorized)
+        </button>
+        <button class="btn" id="btnUncategorized" onclick="switchDatabase('uncategorized')">
+            ❓ الأسئلة غير المصنفة (Uncategorized)
+        </button>
+    </div>
+
+    <div class="page-title" id="pageTitle">📊 إحصائيات الأسئلة المصنفة</div>
+
+    <div id="loading">Loading Excel file...</div>
+
+    <div id="mainContent" class="hidden">
+        <div class="file-info" id="fileInfo">
+            📁 الملف المحمّل: <span id="currentFileName">question_statistics.xlsx</span>
+        </div>
+
+        <div class="filters-container">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label for="filterLecture">رقم الحصة:</label>
+                    <select id="filterLecture">
+                        <option value="">الكل</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="filterClassification">التصنيف الرئيسي:</label>
+                    <select id="filterClassification">
+                        <option value="">الكل</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="filterSubclassification">التصنيف الفرعي:</label>
+                    <select id="filterSubclassification">
+                        <option value="">الكل</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="filterDifficulty">الصعوبة:</label>
+                    <select id="filterDifficulty">
+                        <option value="">الكل</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="sortMastery">ترتيب حسب نسبة الإتقان:</label>
+                    <select id="sortMastery">
+                        <option value="">بدون ترتيب</option>
+                        <option value="asc">تصاعدي (من الأقل إلى الأعلى)</option>
+                        <option value="desc">تنازلي (من الأعلى إلى الأقل)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label for="filterMasteryMin">نسبة الإتقان (من):</label>
+                    <input type="number" id="filterMasteryMin" min="0" max="100" placeholder="0">
+                </div>
+
+                <div class="filter-group">
+                    <label for="filterMasteryMax">نسبة الإتقان (إلى):</label>
+                    <input type="number" id="filterMasteryMax" min="0" max="100" placeholder="100">
+                </div>
+
+                <div class="filter-group">
+                    <label for="filterSubjectId">Subject ID:</label>
+                    <input type="number" id="filterSubjectId" placeholder="أدخل رقم الموضوع">
+                </div>
+
+                <div class="filter-group">
+                    <label for="filterQuestionId">Question ID:</label>
+                    <input type="number" id="filterQuestionId" placeholder="أدخل رقم السؤال">
+                </div>
+            </div>
+
+            <div class="filter-buttons">
+                <button class="btn" onclick="applyFilters()">تطبيق الفلاتر</button>
+                <button class="btn" onclick="resetFilters()">إعادة تعيين</button>
+                <button class="btn" onclick="exportToCSV()">📥 تصدير CSV</button>
+            </div>
+        </div>
+
+        <div class="stats-info">
+            <span>إجمالي الأسئلة: <span id="totalQuestions">0</span></span>
+            <span>الأسئلة المعروضة: <span id="displayedQuestions">0</span></span>
+            <span>متوسط الإتقان: <span id="avgMastery">0</span>%</span>
+            <span>أعلى إتقان: <span id="maxMastery">0</span>%</span>
+            <span>أقل إتقان: <span id="minMastery">0</span>%</span>
+        </div>
+
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Question ID</th>
+                    <th>Subject ID</th>
+                    <th>Lecture #</th>
+                    <th>Mastery Rate</th>
+                    <th>Classification</th>
+                    <th>Subclassification</th>
+                    <th>Difficulty</th>
+                    <th>A%</th>
+                    <th>B%</th>
+                    <th>C%</th>
+                    <th>D%</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+            </tbody>
+        </table>
+    </div>
+
+    <!-- SheetJS library for reading Excel files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <script>
+        let allData = [];
+        let filteredData = [];
+        let currentDatabase = 'categorized';
+        let columnMap = {};
+        
+        // Excel file names
+        const EXCEL_FILES = {
+            categorized: 'question_statistics.xlsx',
+            uncategorized: 'Uncategorized_Questions.xlsx'
+        };
+
+        function switchDatabase(dbType) {
+            currentDatabase = dbType;
+            
+            // Update button styles
+            document.getElementById('btnCategorized').classList.toggle('active', dbType === 'categorized');
+            document.getElementById('btnUncategorized').classList.toggle('active', dbType === 'uncategorized');
+            
+            // Update title
+            const titleEl = document.getElementById('pageTitle');
+            if (dbType === 'categorized') {
+                titleEl.textContent = '📊 إحصائيات الأسئلة المصنفة';
+                titleEl.classList.remove('uncategorized');
+            } else {
+                titleEl.textContent = '❓ إحصائيات الأسئلة غير المصنفة';
+                titleEl.classList.add('uncategorized');
+            }
+            
+            // Show loading and hide content
+            document.getElementById('loading').classList.remove('hidden');
+            document.getElementById('mainContent').classList.add('hidden');
+            
+            // Load the new Excel file
+            loadExcelFile();
+        }
+
+        async function loadExcelFile() {
+            try {
+                const excelFile = EXCEL_FILES[currentDatabase];
+                document.getElementById('currentFileName').textContent = excelFile;
+                
+                const response = await fetch(excelFile);
+                
+                if (!response.ok) {
+                    throw new Error(`Excel file not found: ${excelFile}`);
+                }
+                
+                const arrayBuffer = await response.arrayBuffer();
+                const data = new Uint8Array(arrayBuffer);
+                const workbook = XLSX.read(data, { type: 'array' });
+                
+                // Get the first sheet (All Questions)
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                
+                // Convert to JSON with header row
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                
+                if (jsonData.length < 2) {
+                    throw new Error('No data found in Excel file');
+                }
+                
+                // First row is headers
+                const headers = jsonData[0];
+                
+                // Build column map from headers
+                columnMap = {};
+                headers.forEach((header, index) => {
+                    const headerLower = header.toLowerCase().replace(/[_\s]/g, '');
+                    columnMap[headerLower] = index;
+                });
+                
+                // Map common column names
+                const colNameMappings = {
+                    'id': ['id'],
+                    'question_id': ['questionid', 'question_id'],
+                    'subject_id': ['subjectid', 'subject_id'],
+                    'lecture_sequence': ['lecturesequence', 'lecture_sequence', 'lecturenumber', 'lecture_number'],
+                    'mastery_rate': ['masteryrate', 'mastery_rate'],
+                    'classification_title': ['classificationtitle', 'classification_title'],
+                    'classification_id': ['classificationid', 'classification_id'],
+                    'subclassification_title': ['subclassificationtitle', 'subclassification_title'],
+                    'subclassification_id': ['subclassificationid', 'subclassification_id'],
+                    'difficulty': ['difficulty'],
+                    'discrimination': ['discrimination'],
+                    'group_id': ['groupid', 'group_id'],
+                    'answer_a_percent': ['answerapercent', 'answer_a_percent'],
+                    'answer_b_percent': ['answerbpercent', 'answer_b_percent'],
+                    'answer_c_percent': ['answercpercent', 'answer_c_percent'],
+                    'answer_d_percent': ['answerdpercent', 'answer_d_percent']
+                };
+                
+                // Create standardized column indices
+                const COL = {};
+                for (const [standardName, possibleNames] of Object.entries(colNameMappings)) {
+                    for (const name of possibleNames) {
+                        if (columnMap[name] !== undefined) {
+                            COL[standardName] = columnMap[name];
+                            break;
+                        }
+                    }
+                }
+                
+                // Store COL globally
+                window.COL = COL;
+                
+                // Data rows (skip header)
+                allData = jsonData.slice(1).filter(row => row.length > 0 && row[COL.question_id]);
+                filteredData = [...allData];
+                
+                console.log('Loaded', allData.length, 'rows');
+                console.log('Column mapping:', COL);
+                
+                populateFilters();
+                displayData(filteredData);
+                updateStats();
+                
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('mainContent').classList.remove('hidden');
+                
+            } catch (error) {
+                console.error('Error loading Excel file:', error);
+                document.getElementById('loading').innerHTML = '<div class="error">Error loading data: ' + error.message + '</div>';
+            }
+        }
+
+        function populateFilters() {
+            const COL = window.COL;
+            const lectures = new Set();
+            const classifications = new Set();
+            const subclassifications = new Set();
+            const difficulties = new Set();
+
+            allData.forEach(row => {
+                if (COL.lecture_sequence !== undefined && row[COL.lecture_sequence]) 
+                    lectures.add(row[COL.lecture_sequence]);
+                if (COL.classification_title !== undefined && row[COL.classification_title] && String(row[COL.classification_title]).trim() !== '') 
+                    classifications.add(row[COL.classification_title]);
+                if (COL.subclassification_title !== undefined && row[COL.subclassification_title] && String(row[COL.subclassification_title]).trim() !== '') 
+                    subclassifications.add(row[COL.subclassification_title]);
+                if (COL.difficulty !== undefined && row[COL.difficulty] && String(row[COL.difficulty]).trim() !== '' && row[COL.difficulty] !== 'غير محدد') 
+                    difficulties.add(row[COL.difficulty]);
+            });
+
+            // Lecture filter
+            const lectureSelect = document.getElementById('filterLecture');
+            lectureSelect.innerHTML = '<option value="">الكل</option>';
+            Array.from(lectures).sort((a, b) => a - b).forEach(lecture => {
+                const option = document.createElement('option');
+                option.value = lecture;
+                option.textContent = `حصة ${lecture}`;
+                lectureSelect.appendChild(option);
+            });
+
+            // Classification filter
+            const classificationSelect = document.getElementById('filterClassification');
+            classificationSelect.innerHTML = '<option value="">الكل</option>';
+            Array.from(classifications).sort().forEach(classification => {
+                const option = document.createElement('option');
+                option.value = classification;
+                option.textContent = classification;
+                classificationSelect.appendChild(option);
+            });
+            classificationSelect.addEventListener('change', updateSubclassificationFilter);
+
+            // Subclassification filter
+            const subclassificationSelect = document.getElementById('filterSubclassification');
+            subclassificationSelect.innerHTML = '<option value="">الكل</option>';
+            Array.from(subclassifications).sort().forEach(subclassification => {
+                const option = document.createElement('option');
+                option.value = subclassification;
+                option.textContent = subclassification;
+                subclassificationSelect.appendChild(option);
+            });
+
+            // Difficulty filter
+            const difficultySelect = document.getElementById('filterDifficulty');
+            difficultySelect.innerHTML = '<option value="">الكل</option>';
+            Array.from(difficulties).sort().forEach(difficulty => {
+                const option = document.createElement('option');
+                option.value = difficulty;
+                option.textContent = difficulty;
+                difficultySelect.appendChild(option);
+            });
+        }
+
+        function updateSubclassificationFilter() {
+            const COL = window.COL;
+            const selectedClassification = document.getElementById('filterClassification').value;
+            const subclassificationSelect = document.getElementById('filterSubclassification');
+            
+            subclassificationSelect.innerHTML = '<option value="">الكل</option>';
+            
+            const filteredSubclassifications = new Set();
+            allData.forEach(row => {
+                if (!selectedClassification || row[COL.classification_title] === selectedClassification) {
+                    if (COL.subclassification_title !== undefined && row[COL.subclassification_title] && String(row[COL.subclassification_title]).trim() !== '') {
+                        filteredSubclassifications.add(row[COL.subclassification_title]);
+                    }
+                }
+            });
+            
+            Array.from(filteredSubclassifications).sort().forEach(subclassification => {
+                const option = document.createElement('option');
+                option.value = subclassification;
+                option.textContent = subclassification;
+                subclassificationSelect.appendChild(option);
+            });
+        }
+
+        function applyFilters() {
+            const COL = window.COL;
+            const lectureFilter = document.getElementById('filterLecture').value;
+            const classificationFilter = document.getElementById('filterClassification').value;
+            const subclassificationFilter = document.getElementById('filterSubclassification').value;
+            const difficultyFilter = document.getElementById('filterDifficulty').value;
+            const sortMastery = document.getElementById('sortMastery').value;
+            const masteryMin = parseFloat(document.getElementById('filterMasteryMin').value) || 0;
+            const masteryMax = parseFloat(document.getElementById('filterMasteryMax').value) || 100;
+            const subjectIdFilter = document.getElementById('filterSubjectId').value;
+            const questionIdFilter = document.getElementById('filterQuestionId').value;
+
+            filteredData = allData.filter(row => {
+                const mastery = parseFloat(row[COL.mastery_rate]) || 0;
+                
+                const lectureMatch = !lectureFilter || row[COL.lecture_sequence] == lectureFilter;
+                const classificationMatch = !classificationFilter || row[COL.classification_title] === classificationFilter;
+                const subclassificationMatch = !subclassificationFilter || row[COL.subclassification_title] === subclassificationFilter;
+                const difficultyMatch = !difficultyFilter || row[COL.difficulty] === difficultyFilter;
+                const masteryMatch = mastery >= masteryMin && mastery <= masteryMax;
+                const subjectMatch = !subjectIdFilter || row[COL.subject_id] == subjectIdFilter;
+                const questionMatch = !questionIdFilter || row[COL.question_id] == questionIdFilter;
+
+                return lectureMatch && classificationMatch && subclassificationMatch && 
+                       difficultyMatch && masteryMatch && subjectMatch && questionMatch;
+            });
+
+            if (sortMastery === 'asc') {
+                filteredData.sort((a, b) => (parseFloat(a[COL.mastery_rate]) || 0) - (parseFloat(b[COL.mastery_rate]) || 0));
+            } else if (sortMastery === 'desc') {
+                filteredData.sort((a, b) => (parseFloat(b[COL.mastery_rate]) || 0) - (parseFloat(a[COL.mastery_rate]) || 0));
+            }
+
+            displayData(filteredData);
+            updateStats();
+        }
+
+        function resetFilters() {
+            document.getElementById('filterLecture').value = '';
+            document.getElementById('filterClassification').value = '';
+            document.getElementById('filterSubclassification').value = '';
+            document.getElementById('filterDifficulty').value = '';
+            document.getElementById('sortMastery').value = '';
+            document.getElementById('filterMasteryMin').value = '';
+            document.getElementById('filterMasteryMax').value = '';
+            document.getElementById('filterSubjectId').value = '';
+            document.getElementById('filterQuestionId').value = '';
+            
+            filteredData = [...allData];
+            displayData(filteredData);
+            updateStats();
+            updateSubclassificationFilter();
+        }
+
+        function getMasteryClass(mastery) {
+            if (mastery >= 80) return 'mastery-high';
+            if (mastery >= 50) return 'mastery-medium';
+            return 'mastery-low';
+        }
+
+        function displayData(rows) {
+            const COL = window.COL;
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = '';
+
+            rows.forEach((row, index) => {
+                const tr = document.createElement('tr');
+                const mastery = parseFloat(row[COL.mastery_rate]) || 0;
+                const subjectId = row[COL.subject_id];
+                const questionId = row[COL.question_id];
+                
+                // Row number
+                const tdNum = document.createElement('td');
+                tdNum.textContent = index + 1;
+                tr.appendChild(tdNum);
+                
+                // Question ID (clickable link)
+                const tdQuestionId = document.createElement('td');
+                const questionLink = document.createElement('a');
+                questionLink.href = `https://naseehamath.com/dashboard/subjects/${subjectId}/question/${questionId}/edit`;
+                questionLink.target = '_blank';
+                questionLink.rel = 'noopener noreferrer';
+                questionLink.textContent = questionId;
+                tdQuestionId.appendChild(questionLink);
+                tr.appendChild(tdQuestionId);
+                
+                // Subject ID
+                const tdSubjectId = document.createElement('td');
+                tdSubjectId.textContent = subjectId || '';
+                tr.appendChild(tdSubjectId);
+                
+                // Lecture Number
+                const tdLecture = document.createElement('td');
+                tdLecture.textContent = row[COL.lecture_sequence] || '';
+                tr.appendChild(tdLecture);
+                
+                // Mastery Rate (with color)
+                const tdMastery = document.createElement('td');
+                tdMastery.textContent = mastery.toFixed(1) + '%';
+                tdMastery.classList.add(getMasteryClass(mastery));
+                tr.appendChild(tdMastery);
+                
+                // Classification
+                const tdClassification = document.createElement('td');
+                tdClassification.textContent = row[COL.classification_title] || '';
+                tr.appendChild(tdClassification);
+                
+                // Subclassification
+                const tdSubclassification = document.createElement('td');
+                tdSubclassification.textContent = row[COL.subclassification_title] || '';
+                tr.appendChild(tdSubclassification);
+                
+                // Difficulty
+                const tdDifficulty = document.createElement('td');
+                tdDifficulty.textContent = row[COL.difficulty] || '';
+                tr.appendChild(tdDifficulty);
+                
+                // Answer percentages
+                const answerCols = ['answer_a_percent', 'answer_b_percent', 'answer_c_percent', 'answer_d_percent'];
+                answerCols.forEach(colName => {
+                    const td = document.createElement('td');
+                    const colIndex = COL[colName];
+                    const val = colIndex !== undefined ? (parseFloat(row[colIndex]) || 0) : 0;
+                    td.textContent = val.toFixed(1) + '%';
+                    tr.appendChild(td);
+                });
+                
+                tableBody.appendChild(tr);
+            });
+        }
+
+        function updateStats() {
+            const COL = window.COL;
+            document.getElementById('totalQuestions').textContent = allData.length;
+            document.getElementById('displayedQuestions').textContent = filteredData.length;
+            
+            if (filteredData.length > 0) {
+                const masteries = filteredData.map(row => parseFloat(row[COL.mastery_rate]) || 0);
+                const totalMastery = masteries.reduce((sum, val) => sum + val, 0);
+                const avgMastery = (totalMastery / filteredData.length).toFixed(2);
+                const maxMastery = Math.max(...masteries).toFixed(2);
+                const minMastery = Math.min(...masteries).toFixed(2);
+                
+                document.getElementById('avgMastery').textContent = avgMastery;
+                document.getElementById('maxMastery').textContent = maxMastery;
+                document.getElementById('minMastery').textContent = minMastery;
+            } else {
+                document.getElementById('avgMastery').textContent = '0';
+                document.getElementById('maxMastery').textContent = '0';
+                document.getElementById('minMastery').textContent = '0';
+            }
+        }
+
+        function exportToCSV() {
+            const COL = window.COL;
+            if (filteredData.length === 0) {
+                alert('لا توجد بيانات للتصدير');
+                return;
+            }
+
+            const headers = [
+                '#', 'Question ID', 'Subject ID', 'Lecture #', 'Mastery Rate',
+                'Classification', 'Subclassification', 'Difficulty',
+                'A%', 'B%', 'C%', 'D%'
+            ];
+
+            let csvContent = '\uFEFF' + headers.join(',') + '\n';
+
+            filteredData.forEach((row, index) => {
+                const csvRow = [
+                    index + 1,
+                    row[COL.question_id],
+                    row[COL.subject_id],
+                    row[COL.lecture_sequence],
+                    row[COL.mastery_rate],
+                    `"${(row[COL.classification_title] || '').toString().replace(/"/g, '""')}"`,
+                    `"${(row[COL.subclassification_title] || '').toString().replace(/"/g, '""')}"`,
+                    `"${(row[COL.difficulty] || '').toString().replace(/"/g, '""')}"`,
+                    row[COL.answer_a_percent] || 0,
+                    row[COL.answer_b_percent] || 0,
+                    row[COL.answer_c_percent] || 0,
+                    row[COL.answer_d_percent] || 0
+                ];
+                csvContent += csvRow.join(',') + '\n';
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `question_statistics_${currentDatabase}_${new Date().toISOString().slice(0,10)}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        window.addEventListener('DOMContentLoaded', loadExcelFile);
+    </script>
+</body>
+</html>
